@@ -1,0 +1,1 @@
+# Shooting-for-magazine
