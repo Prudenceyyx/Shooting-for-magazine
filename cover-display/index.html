@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Nested</title>
+    <link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <script src="jquery.nested.js"></script>
+    <script src="makeboxes.js"></script>
+</head>
+
+<body>
+    <a class="btn" id="prepend">Append</a>
+    <div id="container">
+        <div class="box size11">1</div>
+    </div>
+    <!--     <a class="btn" id="prepend">Prepend</a>
+    <a class="btn" id="append">Append</a> -->
+    <script type="text/javascript">
+    var imgpath = "a.png";
+
+    var imgpaths = [];
+
+    var fileextension = ".jpg";
+    var dir = "img/";
+
+
+    function makeBox() {
+        var box = document.createElement('div');
+        var index = Math.random();
+        console.log(index)
+        var i = [1, 1];
+        if (index < 0.05) {
+            i = [2, 3];
+        } else if (index < 0.4) {
+            i = [3, 4]
+        } else if (index < 0.85) {
+            i = [6, 8]
+        } else if (index < 0.99) {
+            i = [7, 9]
+        }
+        box.className = 'box size';
+        box.className += i[0];
+        box.className += i[1];
+        return box;
+    }
+
+
+    function loadBox(path) {
+
+        // $(".container").append(" <div class = 'box size34'>1</div>.");
+        var box = makeBox();
+        loadImage(path, box);
+        $('#container').append(box).nested('append', box);
+
+        // .nested('append', boxes);
+        // $("div.size34").load(function() {
+        //     $(this).appendTo(".container");
+        // });
+    }
+
+    $('#prepend').click(function() {
+        var boxes = makeBox();
+        $('#container').prepend(boxes).nested('prepend', boxes);
+    })
+
+
+    function loadImage(path, target) {
+        $('<img src="' + path + '">').load(function() {
+            // $(this).width(width).height(height).appendTo(target);
+            var styleattr = $(target).attr("style");
+            var len = styleattr.length;
+            var i1 = styleattr.indexOf("width")
+            var i2 = styleattr.indexOf("height")
+            var j1 = styleattr.indexOf("px")
+            var j2 = styleattr.indexOf("px", j1 + 2)
+            var w = +styleattr.substring(i1 + 7, j1);
+            var h = +styleattr.substring(i2 + 8, j2);
+            console.log($(target).attr("class"), j2, w, h);
+            // .width(target.width).height(target.height)
+            $(this).width(w).height(h).appendTo(target);
+        });
+    }
+
+    // loadImage(imgpath, 80, 80, "div");
+
+    $(function() {
+        $('#container').nested();
+        // $('#container').nested({ minWidth: 300 });
+
+        // $('#prepend').click(function() {
+        //     var boxes = makeBoxes();
+        //     $('#container').prepend(boxes).nested('prepend', boxes);
+        // })
+        // $('#append').click(function() {
+        //     var boxes = makeBoxes();
+        //     $('#container').append(boxes).nested('append', boxes);
+        // })
+
+    });
+
+    $.ajax({
+        url: dir,
+        success: function(data) {
+            //Find all pictures in the img file
+            $(data).find("a:contains(" + fileextension + ")").each(function() {
+                var filename = this.href.replace(window.location, "").replace("http:///", "");
+                // $("div").append('<li>' + filename + '</li>');
+                // loadImage(dir + filename,"div")
+                loadBox(dir + filename);
+                //Save the names to a list
+                imgpaths.push(dir + filename);
+            });
+            console.log(imgpaths);
+
+        }
+    });
+    </script>
+</body>
+
+</html>
